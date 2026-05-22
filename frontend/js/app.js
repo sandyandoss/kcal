@@ -3,6 +3,7 @@ const App = (() => {
   let pendingMacros = null;
   let selectedMealType = 'breakfast';
   let editMealType = 'breakfast';
+  let cameraOpenedAt = 0; // timestamp — prevents ghost click from closing modal after camera returns
 
   function dateStr(d) {
     return d.toISOString().slice(0, 10);
@@ -42,6 +43,7 @@ const App = (() => {
   // ── LOG MODAL ──────────────────────────────────────────
   function openLogModal() {
     pendingMacros = null;
+    cameraOpenedAt = 0;
     document.getElementById('log-modal').classList.remove('hidden');
     document.getElementById('food-name').value = '';
     document.getElementById('food-amount').value = '';
@@ -249,7 +251,10 @@ const App = (() => {
     document.getElementById('open-log-btn').addEventListener('click', openLogModal);
     document.getElementById('close-modal').addEventListener('click', closeLogModal);
     document.getElementById('log-modal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) closeLogModal();
+      if (e.target !== e.currentTarget) return;
+      // Ignore backdrop clicks for 2s after camera opens — iOS fires ghost clicks when returning from camera app
+      if (cameraOpenedAt && Date.now() - cameraOpenedAt < 2000) return;
+      closeLogModal();
     });
 
     document.querySelectorAll('.method-btn').forEach(btn => {
@@ -262,13 +267,19 @@ const App = (() => {
       if (e.key === 'Enter') analyzeText();
     });
 
-    // photo
+    // photo — input is outside the label so only the JS click triggers it (avoids double-trigger on mobile)
     document.getElementById('photo-drop').addEventListener('click', () => {
+      cameraOpenedAt = Date.now();
       document.getElementById('photo-input').click();
     });
     document.getElementById('photo-input').addEventListener('change', (e) => {
+      cameraOpenedAt = 0; // camera returned successfully, re-enable backdrop close
       const file = e.target.files[0];
       if (!file) return;
+      // Re-open the modal if iOS closed it via ghost click
+      document.getElementById('log-modal').classList.remove('hidden');
+      document.getElementById('photo-input-section').classList.remove('hidden');
+      document.getElementById('text-input-section').classList.add('hidden');
       document.getElementById('photo-drop-text').textContent = file.name;
       const reader = new FileReader();
       reader.onload = (ev) => {

@@ -141,10 +141,11 @@
 
         <!-- PHOTO INPUT -->
         <div id="photo-input-section" class="hidden">
-          <label class="photo-drop" id="photo-drop">
-            <span id="photo-drop-text">Tap to choose a photo</span>
-            <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden" />
-          </label>
+          <!-- input is outside the label so only the JS click fires it, preventing double-trigger on iOS -->
+          <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden" />
+          <div class="photo-drop" id="photo-drop">
+            <span id="photo-drop-text">Tap to take or choose a photo</span>
+          </div>
           <img id="photo-preview" class="photo-preview hidden" alt="Preview" />
           <button id="analyze-photo-btn" class="btn-secondary hidden">Analyze photo</button>
         </div>
