@@ -1,5 +1,9 @@
 const API = (() => {
-  const BASE = 'http://localhost:3001';
+  // Local dev: frontend on :5500, backend on :3001
+  // Production: same server handles both, so use relative URLs
+  const BASE = (window.location.hostname === 'localhost' && window.location.port === '5500')
+    ? 'http://localhost:3001'
+    : '';
 
   function getToken() {
     return localStorage.getItem('kcal_token');
