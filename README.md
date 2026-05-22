@@ -1,4 +1,4 @@
-# Kcal — AI-Powered Calorie & Macro Tracker
+# Kcal — AI-Powered Calorie & Macro Tracker @ http://13.60.62.137
 
 A calm, mobile-first nutrition tracker that uses AI to analyze your meals from text or photos. Built with Node.js, SQLite, and the Anthropic Claude API.
 
