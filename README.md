@@ -163,4 +163,4 @@ Photo analysis is capped at 5 requests per user per day to keep API costs predic
 
 ## License
 
-MIT
+Created by Sandy Andos
