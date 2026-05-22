@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kcal — Daily Nutrition Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-card">
+      <div class="logo">
+        <span class="logo-icon">🥗</span>
+        <h1>Kcal</h1>
+        <p class="tagline">Simple. Calm. Consistent.</p>
+      </div>
+
+      <div class="tab-row">
+        <button class="tab active" data-tab="login">Sign in</button>
+        <button class="tab" data-tab="register">Create account</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <input type="email" id="login-email" placeholder="Email" required />
+        <input type="password" id="login-password" placeholder="Password" required />
+        <button type="submit" class="btn-primary">Sign in</button>
+        <p class="auth-error" id="login-error"></p>
+      </form>
+
+      <form id="register-form" class="auth-form hidden">
+        <input type="text" id="reg-name" placeholder="Your name" required />
+        <input type="email" id="reg-email" placeholder="Email" required />
+        <input type="password" id="reg-password" placeholder="Password (min 6 chars)" required />
+        <button type="submit" class="btn-primary">Create account</button>
+        <p class="auth-error" id="register-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP SCREEN -->
+  <div id="app-screen" class="screen hidden">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <span class="logo-small">Kcal</span>
+          <span id="streak-badge" class="streak-badge hidden">🔥 <span id="streak-count">0</span></span>
+        </div>
+        <div class="header-right">
+          <span id="user-greeting" class="user-greeting"></span>
+          <button id="settings-btn" class="icon-btn" title="Goals">⚙</button>
+          <button id="logout-btn" class="icon-btn" title="Sign out">↩</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="app-main">
+
+      <!-- DATE NAV -->
+      <div class="date-nav">
+        <button id="prev-day" class="day-btn">‹</button>
+        <span id="current-date-label" class="date-label"></span>
+        <button id="next-day" class="day-btn">›</button>
+      </div>
+
+      <!-- CALORIE RING + MACROS -->
+      <section class="summary-section">
+        <div class="ring-container">
+          <svg class="calorie-ring" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle id="ring-progress" class="ring-fill" cx="60" cy="60" r="52"
+              stroke-dasharray="326.7" stroke-dashoffset="326.7" />
+          </svg>
+          <div class="ring-label">
+            <span id="ring-consumed" class="ring-number">0</span>
+            <span class="ring-unit">kcal</span>
+            <span id="ring-remaining" class="ring-remaining">of 0 left</span>
+          </div>
+        </div>
+
+        <div class="macro-bars">
+          <div class="macro-bar-row">
+            <span class="macro-name">Protein</span>
+            <div class="bar-track"><div id="bar-protein" class="bar-fill protein"></div></div>
+            <span id="label-protein" class="macro-val">0g</span>
+          </div>
+          <div class="macro-bar-row">
+            <span class="macro-name">Carbs</span>
+            <div class="bar-track"><div id="bar-carbs" class="bar-fill carbs"></div></div>
+            <span id="label-carbs" class="macro-val">0g</span>
+          </div>
+          <div class="macro-bar-row">
+            <span class="macro-name">Fat</span>
+            <div class="bar-track"><div id="bar-fat" class="bar-fill fat"></div></div>
+            <span id="label-fat" class="macro-val">0g</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOG MEAL BUTTON -->
+      <div class="log-actions">
+        <button id="open-log-btn" class="btn-primary btn-log">+ Log a meal</button>
+      </div>
+
+      <!-- MEAL CARDS -->
+      <section class="meals-section" id="meals-section">
+        <!-- populated by JS -->
+      </section>
+
+    </main>
+
+    <!-- LOG MEAL MODAL -->
+    <div id="log-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Log a meal</h2>
+          <button id="close-modal" class="icon-btn close-btn">✕</button>
+        </div>
+
+        <div class="input-method-row">
+          <button class="method-btn active" data-method="text">Type food</button>
+          <button class="method-btn" data-method="photo">Upload photo</button>
+        </div>
+
+        <!-- TEXT INPUT -->
+        <div id="text-input-section">
+          <input type="text" id="food-name" placeholder="e.g. Grilled chicken breast" />
+          <input type="text" id="food-amount" placeholder="Amount: 150g, 1 cup, 2 tbsp, 1 piece…" />
+          <div class="analyze-btns">
+            <button id="analyze-text-btn" class="btn-secondary">Analyze with AI</button>
+            <button id="manual-entry-btn" class="btn-ghost">Enter manually</button>
+          </div>
+        </div>
+
+        <!-- PHOTO INPUT -->
+        <div id="photo-input-section" class="hidden">
+          <label class="photo-drop" id="photo-drop">
+            <span id="photo-drop-text">Tap to choose a photo</span>
+            <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden" />
+          </label>
+          <img id="photo-preview" class="photo-preview hidden" alt="Preview" />
+          <button id="analyze-photo-btn" class="btn-secondary hidden">Analyze photo</button>
+        </div>
+
+        <!-- AI RESULT / MANUAL ENTRY -->
+        <div id="ai-result" class="ai-result hidden">
+          <span id="result-name" class="result-name"></span>
+          <p class="ai-note">Edit values if needed:</p>
+          <div class="manual-override">
+            <label class="macro-input-label">Calories<input type="number" id="edit-kcal" placeholder="0" min="0" /></label>
+            <label class="macro-input-label">Protein (g)<input type="number" id="edit-protein" placeholder="0" min="0" /></label>
+            <label class="macro-input-label">Carbs (g)<input type="number" id="edit-carbs" placeholder="0" min="0" /></label>
+            <label class="macro-input-label">Fat (g)<input type="number" id="edit-fat" placeholder="0" min="0" /></label>
+          </div>
+        </div>
+
+        <!-- MEAL TYPE + CONFIRM -->
+        <div id="confirm-section" class="hidden">
+          <div class="meal-type-row">
+            <button class="meal-type-btn active" data-type="breakfast">Breakfast</button>
+            <button class="meal-type-btn" data-type="lunch">Lunch</button>
+            <button class="meal-type-btn" data-type="dinner">Dinner</button>
+            <button class="meal-type-btn" data-type="snack">Snack</button>
+          </div>
+          <button id="save-meal-btn" class="btn-primary">Save meal</button>
+        </div>
+
+        <div id="modal-status" class="modal-status"></div>
+      </div>
+    </div>
+
+    <!-- TARGETS MODAL -->
+    <div id="targets-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Daily goals</h2>
+          <button id="close-targets-modal" class="icon-btn close-btn">✕</button>
+        </div>
+        <form id="targets-form">
+          <label>Calories<input type="number" id="t-calories" min="500" max="9999" /></label>
+          <label>Protein (g)<input type="number" id="t-protein" min="0" max="999" /></label>
+          <label>Carbs (g)<input type="number" id="t-carbs" min="0" max="999" /></label>
+          <label>Fat (g)<input type="number" id="t-fat" min="0" max="999" /></label>
+          <button type="submit" class="btn-primary">Save goals</button>
+        </form>
+        <p id="targets-status" class="modal-status"></p>
+      </div>
+    </div>
+
+    <!-- EDIT MEAL MODAL -->
+    <div id="edit-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Edit meal</h2>
+          <button id="close-edit-modal" class="icon-btn close-btn">✕</button>
+        </div>
+        <form id="edit-meal-form">
+          <input type="hidden" id="edit-meal-id" />
+          <input type="text" id="edit-meal-name" placeholder="Food name" required />
+          <div class="meal-type-row" id="edit-meal-type-row">
+            <button type="button" class="meal-type-btn active" data-type="breakfast">Breakfast</button>
+            <button type="button" class="meal-type-btn" data-type="lunch">Lunch</button>
+            <button type="button" class="meal-type-btn" data-type="dinner">Dinner</button>
+            <button type="button" class="meal-type-btn" data-type="snack">Snack</button>
+          </div>
+          <div class="manual-override">
+            <label class="macro-input-label">Calories<input type="number" id="edit-meal-kcal" min="0" required /></label>
+            <label class="macro-input-label">Protein (g)<input type="number" id="edit-meal-protein" min="0" /></label>
+            <label class="macro-input-label">Carbs (g)<input type="number" id="edit-meal-carbs" min="0" /></label>
+            <label class="macro-input-label">Fat (g)<input type="number" id="edit-meal-fat" min="0" /></label>
+          </div>
+          <button type="submit" class="btn-primary">Save changes</button>
+        </form>
+        <p id="edit-meal-status" class="modal-status"></p>
+      </div>
+    </div>
+
+  </div><!-- /app-screen -->
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/meals.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
